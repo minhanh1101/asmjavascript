@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giỏ hàng</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://kit.fontawesome.com/f20d460fd9.js" crossorigin="anonymous"></script>
+    <script src="sanPham.js"></script>
+    <script src="gioHang.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+        }
+
+        img {
+            width: 100%;
+        }
+
+        input {
+            max-width: 30px;
+            padding: 4px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 50px;
+            margin-bottom: 50px;
+            color: purple;
+        }
+
+        .gio-hang {
+            max-width: 1100px;
+            border: 1px solid #ddd;
+            box-shadow: 2px 2px 4px #ddd;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .item-gio-hang {
+            padding: 10px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .item-gio-hang .hinhAnh img {
+            width: 60px;
+            height: 60px;
+        }
+
+        .item-gio-hang .hinhAnh .soLuong .tongTien .hanhDong {
+            flex: 1;
+            margin-left: 10px;
+        }
+
+        .item-gio-hang .gia {
+            flex: 2;
+            max-width: 150px;
+        }
+
+        .item-gio-hang .ten {
+            flex: 3;
+            max-width: 200px;
+        }
+
+        .item-gio-hang .gia .giaGoc {
+            font-size: 12px;
+            text-decoration: line-through;
+            color: #888;
+            margin-right: 20px;
+        }
+
+        .item-gio-hang .gia .giaBan {
+            color: darkmagenta;
+        }
+
+        .item-gio-hang .hanhDong i:hover {
+            color: darkmagenta;
+        }
+    </style>
+</head>
+
+<body onload="hienThiGioHang()">
+    <h1>Giỏ hàng</h1>
+    
+        <div id="gio-hang1" class="gio-hang">
+        
+        </div>
+    <script>
+        //Bước 1: Xây dựng layout 
+        //Bước 2: Viết hàm chuyển đổi đối tượng item giỏ hàng thành html -> giả lập hàm (hardcode luôn đoan html trong bước 1)
+        /*Mô tả: Chuyển một đối tượng thành HTML
+            input: đối tượng giỏ hàng
+            output: HTML hiểm thị item giỏ hàng
+        */
+        function chuyenDoiTuongItemGioHangSangHTML(itemGioHang) {
+            //itemGioHang: idSanPham và soLuong
+            //Bước 1: từ idSanPham -> một đối tượng sản phẩm (hình ảnh, tên, giá)
+            var sanPham = laySanPhamTheoId(itemGioHang.idSanPham);
+            console.log(sanPham);
+            var tongTien = itemGioHang.soLuong * sanPham.tinhGiaBan();
+            //Bước 2: Khi có tối tượng, thay thế những giá trị của đối tượng vào đoạn HTML
+            var HTML = "";
+            //Chuyển đổi sang HTML
+            HTML += "<div class='item-gio-hang'>";
+            HTML += "   <div class='hinhAnh'>";   
+            HTML += "       <img src='"+ sanPham.hinhAnh +"'>"; 
+            HTML += "   </div>"; 
+            HTML += "   <p class='ten'>" + sanPham.ten + "</p>"; 
+            HTML += "   <div class='gia'>"; 
+            HTML += "       <span class='giaGoc'>"+ sanPham.giaGoc +"</span>"; 
+            HTML += "       <span class='giaBan'>"+ sanPham.tinhGiaBan() +"</span>"; 
+            HTML += "   </div>"; 
+            HTML += "   <input type='number' class='soLuong' value='"+ itemGioHang.soLuong +"'>"; 
+            HTML += "   <p class='tongTien'>"+ tongTien +"</p>"; 
+            HTML += "   <div class='hanhDong'>"; 
+            HTML += "       <i class='far fa-trash-alt' aria-hidden='true' onclick='xoaSanPhamTrongGioHang(" + sanPham.id + ")'></i>"; 
+            HTML += "   </div>"; 
+            HTML += "</div>"; 
+            return HTML;
+            }
+        //Bước 3: Chuyển đổi danh sách item giỏ hàng thành html
+        function chuyenDanhSachItemGioHangSangHTML(danhSachItemGioHang) {
+            var HTMLTong = "";
+            for (var i = 0; i < danhSachItemGioHang.length; i++){
+                var HTML = chuyenDoiTuongItemGioHangSangHTML(danhSachItemGioHang[i]);
+                HTMLTong += HTML;
+            }
+            return HTMLTong;
+        }
+        //Bước 4: Lấy danh sách item giỏ hàng dưới local storage lên và hiển thị
+        function hienThiGioHang() {
+            //Bước 1: Load giỏ hàng từ Local Storage lên
+            var danhSachItemGioHang = layGioHangTuLocalStorage();
+            //Bước 2: Chuyển danh sách item giỏ hàng thành HTML
+            var HTML = chuyenDanhSachItemGioHangSangHTML(danhSachItemGioHang);
+            //Bước 3: Truy cập node muốn hiển thị. Đưa đoạn HTML vào node đó
+            var nodeGioHang = document.getElementById("gio-hang1");
+            nodeGioHang.innerHTML = HTML;
+        }
+        //Bước 5: Viết hàm xử lý logic ở bước 2
+    </script>
+</body>
+
+</html>

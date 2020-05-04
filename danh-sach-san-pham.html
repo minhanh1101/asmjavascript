@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tất cả sản phẩm</title>
+    <script src="sanPham.js"></script>
+    <script src="gioHang.js"></script>
+    <style>
+              img {
+            width: 100%;
+        }
+        .tieude {
+            color: #a00591;
+        }
+        .san-pham {
+            width: 15%;
+            border: 1px solid #a00591;
+            border-radius: 5px;
+            padding: 20px;
+            display: inline-block;
+            margin: 10px 20px;
+            background-color: #ffffff;
+        }
+        .ten-san-pham {
+            font-size: 18px;
+            line-height: 30px;
+            color: #94054d;
+        }
+        .gia-truoc-khi-giam {
+            font-size: 12px;
+            text-decoration: line-through;
+            color: darkgray;
+
+        }
+        .gia-sau-khi-giam {
+            font-size: 14px;
+            color: #8d2743;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: 1px solid white;
+            background-color: #d86178;
+            color: white;
+            border-radius: 8px;
+            width: 100%;
+        }
+        .tieude {
+            text-align: center;
+        }
+        .round {
+            margin: 0 auto;
+            background-color: pink;
+            padding-left: 150px;
+        }
+        .gia-giam {
+            line-height: 40px;
+            font-size: 14px;
+            float: right;
+            color: #94054d;
+        }
+        .khu-vuc-ban {
+            font-size: 18px;
+            color: brown;
+        }
+        .tacvu{
+            width: 30%;
+            min-height: 50px;
+            margin: 0 auto;
+            margin-bottom: 50px;
+        }
+        .tacvu a{
+            width: 30%;
+            min-height: 35px;
+            text-align: center;
+            padding-top: 15px;
+            text-decoration: none;
+            color: whitesmoke;
+            border: 1px solid white;
+            border-radius: 5px;
+        }
+        .themsp:hover{
+            background-color: darksalmon;
+        }
+        .themgh:hover{
+            background-color: #94054d;
+        }
+        .themsp{
+            background-color: #94054d;
+            float: left;
+        }
+        .themgh{
+             background-color: darksalmon;
+            float: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="tieude">
+        <h1>Danh sách sản phẩm</h1>
+        <div class="tacvu">
+            <a class="themsp" href="them-san-pham.html">Thêm sản phẩm</a>
+            <a class="themgh" href="gio-hang.html">Xem giỏ hàng</a>
+        </div>
+    </div>
+    <div class="round">
+        <div id="list">
+            <!--Hiển thị sản phẩm-->
+        </div>
+    </div>
+    <script>
+        //Yêu cầu 1: Lưu trữ danh sách sản phẩm xuống Local Storage
+        //Bước 1: Tạo ra các sản phẩm và đưa vào danh sách sản phẩm
+        //->Trong file sanPham.js
+        //Bước 2: Chuyển đổi danh sách sản phẩm thành JSON
+        if (localStorage.getItem("danhSachSanPham") == null || localStorage.getItem("danhSachSanPham") == "") {
+            var danhSachSanPham = taoDanhSachSanPham();
+            var jsondanhSachSanPham = JSON.stringify(danhSachSanPham);
+            console.log("Danh sách sản phẩm sau khi chuyển thành JSON là: " + jsondanhSachSanPham);
+
+            //Bước 3: Lưu trữ danh sách sản phẩm xuống Local Storage
+            localStorage.setItem("danhSachSanPham", jsondanhSachSanPham);
+        }
+
+        //Yêu cầu 2: Chuyển đổi lại chuỗi JSON từ Local Storage thành danh sách sản phẩm
+        // Lấy chuỗi JSON từ Local Storage lên
+        var jsonDanhSachSanPham = localStorage.getItem("danhSachSanPham");
+
+        var danhSachSanPham = taoDoiTuongSanPham().fromJSON(jsonDanhSachSanPham);
+
+        //Yêu cầu 3: Hiển thị danh sách sản phẩm
+        //Bước 1: Chuyển danh sách sản phẩm lấy được từ Local Storage thành đoạn HTML
+        var HTML = chuyenDoiDanhSachSanPhamThanhHTML(danhSachSanPham);
+        console.log(danhSachSanPham);
+        console.log(HTML);
+
+
+        //Bước 2: Gắn đoạn HTML đó vào node hiển thị sản phẩm
+        var nodeHienThiSanPham = document.getElementById("list");
+        nodeHienThiSanPham.innerHTML = HTML;
+
+        function onClickDuaVaoGioHang(idSanPham) {
+            alert("Đưa vào giỏ hàng với sản phẩm có id là: " + idSanPham);
+            //Bước 1: Phân tích lưu trữ giỏ hàng như thế nào. Lưu trữ trong local storage
+
+            /* Giỏ hàng: là một danh sách các đối tượng là item giỏ hàng. Item giỏ hàng bao gồm các thông tin:
+                1. Sản phẩm là gì -> sử dụng ID của sản phẩm để lưu 
+                2. Số lượng là bao nhiêu
+            */
+            //Bước 2: Xây dựng hàm tạo nhanh đối tượng item giỏ hàng
+
+            //Bước 3: Lấy danh sách giỏ hàng có trong local storage lên
+            var danhSachItemGioHang = layGioHangTuLocalStorage();
+
+            //Bước 4: Thêm item vào danh sách giỏ hàng
+            var coTonTaiTrongDanhSachItemGioHang = false;
+            for (var i = 0; i < danhSachItemGioHang.length; i++) {
+                var itemGioHangHienTai = danhSachItemGioHang[i];
+                //Nếu tồn tại thì tăng số lượng lên
+                if (itemGioHangHienTai.idSanPham == idSanPham) {
+                    danhSachItemGioHang[i].soLuong++;
+                    coTonTaiTrongDanhSachItemGioHang = true;
+                }
+            }
+            //Nếu không tồn tại -> tạo ra đối tượng và thêm vào danh sách item giỏ hàng
+            if (coTonTaiTrongDanhSachItemGioHang == false) {
+                var itemGioHang = taoDoiTuongItemGioHang(idSanPham, 1)
+                danhSachItemGioHang.push(itemGioHang)
+            }
+
+            //Bước 5: Lưu trữ lại vào LocalStorage
+            luuGioHangVaoLocalStorage(danhSachItemGioHang);
+        }
+    </script>
+</body>
+</html>

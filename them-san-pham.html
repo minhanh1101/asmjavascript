@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thêm sản phẩm</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="sanPham.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 50px;
+            color: #94054d;
+        }
+
+        .them-moi-san-pham {
+            color: #8d2743;
+            width: 50%;
+            border: 1px solid #ddd;
+            margin: 0 auto;
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: 2px 2px 5px #444;
+            margin-bottom: 50px;
+        }
+
+        .them-moi-san-pham label,
+        input {
+            width: 100%;
+            display: block;
+        }
+
+        .them-moi-san-pham label {
+            margin-top: 20px;
+        }
+
+        .them-moi-san-pham input {
+            margin-top: 5px;
+            padding: 10px 20px;
+            border: 1px solid #94054d;
+            border-radius: 10px;
+        }
+
+        .them-moi-san-pham button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 10px 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #8d2743;
+            color: whitesmoke;
+        }
+
+        .them-moi-san-pham button:hover {
+            background-color: whitesmoke;
+            color: #94054d;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Thêm mới sản phẩm</h1>
+    <div class="them-moi-san-pham">
+        <label for="hinhAnh">Hình ảnh sản phẩm</label>
+        <input type="text" id="hinhAnh">
+
+        <label for="ten">Tên sản phẩm</label>
+        <input type="text" id="ten">
+
+        <label for="giaGoc">Giá gốc</label>
+        <input type="number" id="giaGoc">
+
+        <label for="phanTramGiamGia">Giảm giá (%) - Giá trị từ 10 - 90</label>
+        <input type="number" id="phanTramGiamGia">
+
+        <label for="khuVuc">Khu vực bán</label>
+        <input type="text" id="khuVuc">
+
+        <button id="btn">Tạo sản phẩm</button>
+    </div>
+    <script>
+        //Bước 1: Lấy danh sách sản phẩm đã có trong Local Storage
+        var danhSachSanPham = JSON.parse(localStorage.getItem("danhSachSanPham"));
+        if (danhSachSanPham == null) {
+            danhSachSanPham = new Array();
+        }
+        
+        //Nhiệm vụ:
+        //1. Lắng nghe sự kiện onclick, khi người dùng click vào button tạo sản phẩm
+        //2. Lấy toàn bộ dữ liệu người dùng nhập vào
+        //3. Tạo ra đối tượng từ các dữ liệu người dùng nhập vào
+        
+        function onClickTaoSanPham() {
+            //1. Truy cập các node để lấy được dữ liệu
+            var nodeHinhAnh = document.getElementById("hinhAnh");
+            var hinhAnh = nodeHinhAnh.value;
+            console.log("Hình ảnh là: " + hinhAnh);
+            nodeHinhAnh.value = "";
+
+            var nodeTen = document.getElementById("ten")
+            var ten = nodeTen.value;
+            console.log("Tên sản phẩm: " + ten);
+            nodeTen.value = "";
+
+            var nodeGiaGoc = document.getElementById("giaGoc")
+            var giaGoc = parseInt(nodeGiaGoc.value);
+            console.log("Giá gốc: " + giaGoc);
+            nodeGiaGoc.value = "";
+
+            var nodePhanTramGiamGia = document.getElementById("phanTramGiamGia");
+            var phanTramGiamGia = parseFloat(nodePhanTramGiamGia.value);
+            console.log("Phần trăm giảm giá: " + phanTramGiamGia);
+            nodePhanTramGiamGia.value = "";
+
+            var nodeKhuVuc = document.getElementById("khuVuc");
+            var khuVuc = nodeKhuVuc.value;
+            console.log("Khu vực bán: " + khuVuc);
+            nodeKhuVuc.value = "";
+
+            //2. Tạo ra đối tượng từ các dữ liệu người dùng nhập vào
+            var sanPham = taoDoiTuongSanPham(hinhAnh, ten, giaGoc, phanTramGiamGia, khuVuc, null);
+            console.log(sanPham);
+            console.log("Tên sản phẩm nhập vào là: " + sanPham.ten + " Giá bán là: " + sanPham.tinhGiaBan());
+
+
+            //3. Đưa sản phẩm vào danh sách
+            danhSachSanPham.push(sanPham);
+            console.log("Danh sách các sản phẩm là: ");
+            console.log(danhSachSanPham);
+
+            //Lưu trữ danh sách sản phẩm xuống Local Storage
+            var jsonDanhSachSanPham = JSON.stringify(danhSachSanPham);
+            localStorage.setItem("danhSachSanPham", jsonDanhSachSanPham);
+        }
+    </script>
+</body>
+
+</html>
